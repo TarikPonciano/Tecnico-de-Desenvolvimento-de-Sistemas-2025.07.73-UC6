@@ -1,0 +1,11 @@
+ALTER TABLE cliente
+ADD COLUMN nasc_cliente date NOT NULL DEFAULT '2000-01-01';
+
+ALTER TABLE produto
+ALTER COLUMN preco_produto TYPE NUMERIC(10,4);
+
+ALTER TABLE item
+ALTER COLUMN preco_item TYPE NUMERIC(10,4);
+
+ALTER TABLE produto
+ALTER COLUMN nome_produto SET NOT NULL;
