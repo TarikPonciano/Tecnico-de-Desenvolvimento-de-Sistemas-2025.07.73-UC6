@@ -11,16 +11,29 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 
-conn = psycopg2.connect(dbname = DB_NAME, user= DB_USER, password = DB_PASSWORD, port = DB_PORT, host=DB_HOST)
+try:
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER,
+                            password=DB_PASSWORD, port=DB_PORT, host=DB_HOST)
 
-cur = conn.cursor()
+    cur = conn.cursor()
 
-cur.execute("SELECT VERSION()")
+    cur.execute("SELECT VERSION();")
 
-resultado = cur.fetchall()
+    resultado = cur.fetchall()
 
-print(resultado)
+    print(resultado)
 
-cur.close()
-conn.close()
+    cur.execute('''
+CREATE TABLE IF NOT EXISTS aluno(
+id_aluno integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+nome_aluno varchar(255) NOT NULL,
+cpf_aluno char(11) NOT NULL UNIQUE,
+CONSTRAINT chk_cpf CHECK(LENGTH(cpf_aluno)=11)
+                );
+''')
+    conn.commit()
 
+    cur.close()
+    conn.close()
+except Exception as e:
+    print("Erro:", e)
