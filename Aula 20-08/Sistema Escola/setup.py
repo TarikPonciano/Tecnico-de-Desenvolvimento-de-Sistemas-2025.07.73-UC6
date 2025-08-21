@@ -31,6 +31,19 @@ cpf_aluno char(11) NOT NULL UNIQUE,
 CONSTRAINT chk_cpf CHECK(LENGTH(cpf_aluno)=11)
                 );
 ''')
+# Caso queira resetar os dados da tabela também, usar o comando abaixo:
+#     cur.execute('''
+# DROP TABLE IF EXISTS disciplina;
+# ''')
+    cur.execute('''
+CREATE TABLE IF NOT EXISTS disciplina(
+id_disciplina integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+nome_disciplina varchar(255) NOT NULL,
+ch_disciplina integer NOT NULL DEFAULT 0,
+CONSTRAINT chk_ch CHECK (ch_disciplina >= 0)
+                );
+''')
+
     conn.commit()
 
     cur.close()
