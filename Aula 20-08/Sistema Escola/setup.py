@@ -23,7 +23,13 @@ try:
 
     print(resultado)
     cur.execute('''
+DROP TABLE IF EXISTS matricula;
+''')
+    cur.execute('''
 DROP TABLE IF EXISTS aluno;
+''')
+    cur.execute('''
+DROP TABLE IF EXISTS disciplina;
 ''')
     cur.execute('''
 CREATE TABLE IF NOT EXISTS aluno(
@@ -34,9 +40,7 @@ CONSTRAINT chk_cpf CHECK(LENGTH(cpf_aluno)=11)
                 );
 ''')
 # Caso queira resetar os dados da tabela também, usar o comando abaixo:
-    cur.execute('''
-DROP TABLE IF EXISTS disciplina;
-''')
+
     cur.execute('''
 CREATE TABLE IF NOT EXISTS disciplina(
 id_disciplina integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -47,20 +51,23 @@ CONSTRAINT chk_ch CHECK (ch_disciplina >= 0)
 ''')
 
     cur.execute('''
-DROP TABLE IF EXISTS matricula;
-''')
-
-    cur.execute('''
 CREATE TABLE IF NOT EXISTS matricula(
 id_matricula integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 aluno_id integer NOT NULL,
 disciplina_id integer NOT NULL,
 media_matricula NUMERIC (4,2) DEFAULT 0,
 faltas_matricula integer DEFAULT 0,
-CONSTRAINT fk_aluno_matricula FOREIGN KEY aluno_id REFERENCES aluno(id_aluno),
-CONSTRAINT fk_disciplina_matricula FOREIGN KEY disciplina_id REFERENCES disciplina(id_disciplina),
+CONSTRAINT fk_aluno_matricula FOREIGN KEY (aluno_id) REFERENCES aluno(id_aluno),
+CONSTRAINT fk_disciplina_matricula FOREIGN KEY (disciplina_id) REFERENCES disciplina(id_disciplina),
 CONSTRAINT chk_media CHECK (media_matricula >= 0 AND media_matricula <= 10)
 );
+''')
+
+    # Criar 5 alunos, 2 disciplinas, 3 matriculas
+
+    cur.execute('''
+INSERT INTO aluno(nome_aluno, cpf_aluno)
+VALUES ('Jefferson', '12345678910'), ('Zeca', '12345678911'), ('Manel','12345678912', ('Maicao', '12345678913'), ('Ana', '12345678914');
 ''')
 
     conn.commit()
