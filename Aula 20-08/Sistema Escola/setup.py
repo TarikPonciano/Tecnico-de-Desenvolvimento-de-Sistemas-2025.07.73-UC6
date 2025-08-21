@@ -1,12 +1,15 @@
 import psycopg2
 import dotenv
+import os
+
+dotenv.load_dotenv(dotenv.find_dotenv())
 
 # Versão POSTGRESQL 17
-DB_NAME = "Escola2"
-DB_USER = "postgres"
-DB_PASSWORD = "senac"
-DB_HOST = "127.0.0.1"
-DB_PORT = "5432"  # Pode ser 5433
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT") # Pode ser 5433
 
 # Versão Aiven
 DB_NAME = "Escola2"
