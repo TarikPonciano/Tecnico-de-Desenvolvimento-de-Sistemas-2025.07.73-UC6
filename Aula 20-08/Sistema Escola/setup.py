@@ -4,22 +4,14 @@ import os
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
-# Versão POSTGRESQL 17
+# Versão Aiven
 DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT") # Pode ser 5433
+DB_PORT = os.getenv("DB_PORT")
 
-# Versão Aiven
-DB_NAME = "Escola2"
-DB_USER = "****************"
-DB_PASSWORD = "************"
-DB_HOST = "*************"
-DB_PORT = "************"
-
-conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER,
-                        host=DB_HOST, port=DB_PORT, password=DB_PASSWORD)
+conn = psycopg2.connect(dbname = DB_NAME, user= DB_USER, password = DB_PASSWORD, port = DB_PORT, host=DB_HOST)
 
 cur = conn.cursor()
 
@@ -31,3 +23,4 @@ print(resultado)
 
 cur.close()
 conn.close()
+
