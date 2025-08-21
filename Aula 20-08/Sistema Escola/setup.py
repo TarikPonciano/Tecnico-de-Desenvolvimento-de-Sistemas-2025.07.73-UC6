@@ -67,7 +67,7 @@ CONSTRAINT chk_media CHECK (media_matricula >= 0 AND media_matricula <= 10)
 
     cur.execute('''
 INSERT INTO aluno(nome_aluno, cpf_aluno)
-VALUES ('Jefferson', '12345678910'), ('Zeca', '12345678911'), ('Manel','12345678912', ('Maicao', '12345678913'), ('Ana', '12345678914');
+VALUES ('Jefferson', '12345678910'), ('Zeca', '12345678911'), ('Manel','12345678912'), ('Maicao', '12345678913'), ('Ana', '12345678914') ON CONFLICT DO NOTHING;
 ''')
 
     conn.commit()
