@@ -22,7 +22,9 @@ try:
     resultado = cur.fetchall()
 
     print(resultado)
-
+    cur.execute('''
+DROP TABLE IF EXISTS aluno;
+''')
     cur.execute('''
 CREATE TABLE IF NOT EXISTS aluno(
 id_aluno integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -32,9 +34,9 @@ CONSTRAINT chk_cpf CHECK(LENGTH(cpf_aluno)=11)
                 );
 ''')
 # Caso queira resetar os dados da tabela também, usar o comando abaixo:
-#     cur.execute('''
-# DROP TABLE IF EXISTS disciplina;
-# ''')
+    cur.execute('''
+DROP TABLE IF EXISTS disciplina;
+''')
     cur.execute('''
 CREATE TABLE IF NOT EXISTS disciplina(
 id_disciplina integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -42,6 +44,23 @@ nome_disciplina varchar(255) NOT NULL,
 ch_disciplina integer NOT NULL DEFAULT 0,
 CONSTRAINT chk_ch CHECK (ch_disciplina >= 0)
                 );
+''')
+
+    cur.execute('''
+DROP TABLE IF EXISTS matricula;
+''')
+
+    cur.execute('''
+CREATE TABLE IF NOT EXISTS matricula(
+id_matricula integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+aluno_id integer NOT NULL,
+disciplina_id integer NOT NULL,
+media_matricula NUMERIC (4,2) DEFAULT 0,
+faltas_matricula integer DEFAULT 0,
+CONSTRAINT fk_aluno_matricula FOREIGN KEY aluno_id REFERENCES aluno(id_aluno),
+CONSTRAINT fk_disciplina_matricula FOREIGN KEY disciplina_id REFERENCES disciplina(id_disciplina),
+CONSTRAINT chk_media CHECK (media_matricula >= 0 AND media_matricula <= 10)
+);
 ''')
 
     conn.commit()
