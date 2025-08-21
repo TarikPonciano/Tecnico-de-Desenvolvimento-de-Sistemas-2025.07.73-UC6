@@ -70,6 +70,15 @@ INSERT INTO aluno(nome_aluno, cpf_aluno)
 VALUES ('Jefferson', '12345678910'), ('Zeca', '12345678911'), ('Manel','12345678912'), ('Maicao', '12345678913'), ('Ana', '12345678914') ON CONFLICT DO NOTHING;
 ''')
 
+    cur.execute('''
+INSERT INTO disciplina(nome_disciplina, ch_disciplina)
+VALUES ('Programação Orientada a Objetos', 240), ('Banco de Dados', 180) ON CONFLICT DO NOTHING;
+                ''')
+    cur.execute('''
+INSERT INTO matricula(aluno_id, disciplina_id)
+VALUES (2, 1), (1,2), (3,1) ON CONFLICT DO NOTHING;
+''')
+
     conn.commit()
 
     cur.close()
