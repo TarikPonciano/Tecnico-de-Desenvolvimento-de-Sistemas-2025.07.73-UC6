@@ -136,11 +136,59 @@ VALUES ('Tolkien'), ('Dan Brown'), ('Clarice Lispector'), ('Machado de Assis'), 
     cur.execute('''
 SELECT id_livro, titulo_livro, ano_livro, data_emprestimo  FROM emprestimo
 RIGHT JOIN livro ON livro_id = id_livro
-WHERE devolucao_emprestimo is null
+WHERE devolucao_emprestimo is not null
 ORDER BY id_emprestimo ASC;
 ''')
     resultado = cur.fetchall()
     print(resultado)
+
+    cur.execute('''
+SELECT nome_membro, titulo_livro, nome_autor, data_emprestimo, devolucao_emprestimo FROM emprestimo
+INNER JOIN membro ON membro_id = id_membro
+INNER JOIN livro ON livro_id = id_livro                
+INNER JOIN autor ON autor_id = id_autor
+WHERE nome_membro LIKE 'Maria%';
+''')
+    resultado = cur.fetchall()
+    print(resultado)
+
+    cur.execute('''
+    SELECT COUNT(id_livro) FROM livro
+    WHERE ano_livro > 2000; ''')
+
+    resultado = cur.fetchall()
+
+    print(f'Livros publicados após 2000: {resultado[0][0]}')
+
+    cur.execute('''
+    ALTER TABLE membro
+    ADD COLUMN telefone_membro VARCHAR(11);''')
+
+#     cur.execute('''
+#     UPDATE membro
+#     SET telefone_membro = 'SEM TEL'
+#     WHERE telefone_membro is null;
+# ''')
+
+#     cur.execute('''
+#     ALTER TABLE membro
+#     ALTER COLUMN telefone_membro SET NOT NULL;
+# ''')
+
+    cur.executemany('''
+    ALTER TABLE emprestimo
+    DROP COLUMN id_emprestimo;
+            
+    ALTER TABLE emprestimo
+    ADD PRIMARY KEY(membro_id, livro_id);
+''', [])
+
+    cur.execute('''
+    ALTER TABLE livro
+    ADD CONSTRAINT chk_ano_publicacao CHECK (ano_livro > 1900);
+''')
+
+    conn.commit()
 
     cur.close()
     conn.close()
