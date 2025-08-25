@@ -1,6 +1,7 @@
 import psycopg2
 import dotenv
 import os
+import datetime
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -89,6 +90,27 @@ VALUES ('Tolkien'), ('Dan Brown'), ('Clarice Lispector'), ('Machado de Assis'), 
     VALUES (1,2), (2,3), (5,1), (3,2)
                 ) ON CONFLICT DO NOTHING;
 ''')
+    conn.commit()
+
+    cur.execute('''
+    UPDATE membro
+    SET
+    email_membro = 'manoelgomes@gmail.com'
+    WHERE
+    id_membro = 1;
+''')
+
+    cur.execute('''
+    UPDATE emprestimo
+    SET devolucao_emprestimo = CURRENT_DATE
+    WHERE id_emprestimo = 1;
+''')
+
+    cur.execute('''
+    DELETE FROM livro
+    WHERE titulo_livro = 'Naruto';
+''')
+
     conn.commit()
 
     cur.close()
