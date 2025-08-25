@@ -77,17 +77,17 @@ VALUES ('Tolkien'), ('Dan Brown'), ('Clarice Lispector'), ('Machado de Assis'), 
 
     cur.execute('''
     INSERT INTO membro(nome_membro, email_membro)
-    VALUES ('Manoel', 'manoel@gmail.com'), ('Joaquim','joaquim@gmail.com'), ('Rafaela', 'rafaela@gmail.com') ON CONFLICT DO NOTHING;
+    VALUES ('Manoel', 'manoel@gmail.com'), ('Joaquim','joaquim@gmail.com'), ('Rafaela', 'rafaela@gmail.com'), ('Maria Silva', 'mariasilva@gmail.com') ON CONFLICT DO NOTHING;
                 ''')
 
     cur.execute('''
     INSERT INTO livro(titulo_livro, ano_livro, autor_id)
-    VALUES('Código Da Vinci', 2005, 2), ('Senhor dos Anéis', 1942, 1), ('Anjos e Demonios', 2007, 2), ('Naruto', 2001, 7), ('Dragon Ball', 1980, 8) ON CONFLICT DO NOTHING;
+    VALUES('Código Da Vinci', 2005, 2), ('Senhor dos Anéis', 1942, 1), ('Anjos e Demonios', 2007, 2), ('Naruto', 2001, 7), ('Dragon Ball', 1980, 8), ('Dr Slump', 1977, 8) ON CONFLICT DO NOTHING;
 ''')
 
     cur.execute('''
     INSERT INTO emprestimo (livro_id, membro_id) (
-    VALUES (1,2), (2,3), (5,1), (3,2)
+    VALUES (1,2), (2,3), (5,1), (3,2), (6,4)
                 ) ON CONFLICT DO NOTHING;
 ''')
     conn.commit()
@@ -110,8 +110,37 @@ VALUES ('Tolkien'), ('Dan Brown'), ('Clarice Lispector'), ('Machado de Assis'), 
     DELETE FROM livro
     WHERE titulo_livro = 'Naruto';
 ''')
-
     conn.commit()
+# Método Manual - Consultas Múltiplas
+#     cur.execute('''
+# SELECT * FROM emprestimo
+# WHERE devolucao_emprestimo is null
+# ORDER BY id_emprestimo ASC;
+# ''')
+
+#     resultado = cur.fetchall()
+#     livrosEmprestados = []
+
+#     for r in resultado:
+#         livrosEmprestados.append(r[2])
+
+#     cur.execute('''
+# SELECT * FROM livro
+# WHERE id_livro IN %s;
+# ''', (tuple(livrosEmprestados),))
+
+#     resultado = cur.fetchall()
+#     print(resultado)
+
+# Exibir livros emprestados porém não devolvidos
+    cur.execute('''
+SELECT id_livro, titulo_livro, ano_livro, data_emprestimo  FROM emprestimo
+RIGHT JOIN livro ON livro_id = id_livro
+WHERE devolucao_emprestimo is null
+ORDER BY id_emprestimo ASC;
+''')
+    resultado = cur.fetchall()
+    print(resultado)
 
     cur.close()
     conn.close()
