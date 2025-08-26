@@ -7,6 +7,9 @@
 import psycopg2
 import dotenv
 import os
+from conexaoDB import ConexaoDB
+
+
 
 
 def verFuncionarios():
@@ -23,10 +26,14 @@ def verFuncionarios():
         SELECT * FROM funcionario
         ORDER BY id_funcionario ASC;
 ''')
-        resultado = cursor.fetchall()
+        resultado = meuBanco.consultar('''
+        SELECT * FROM funcionario
+        ORDER BY id_funcionario ASC;
+''')
 
         cursor.close()
         conn.close()
+        
     except Exception as e:
         print("Error:", e)
         resultado = None
@@ -53,24 +60,16 @@ def cadastrarFuncionario():
     if departamento == 0:
         departamento = None
 
-    try:
-        conn = psycopg2.connect(dbname=DB_NAME, host=DB_HOST,
-                                port=DB_PORT, user=DB_USER, password=DB_PASSWORD)
-        cursor = conn.cursor()
+    resultado = meuBanco.manipular('''
+INSERT INTO funcionario
+VALUES (default, %s,%s,%s,%s,%s);
+''', (nome,cpf,salario,cargo,departamento))
+    
+    if resultado == "DEU CERTO!":
+        print("Funcionário Cadastrado com sucesso!")
+    else:
+        print("Erro ao cadastrar funcionário.")
 
-        cursor.execute('''
-        INSERT INTO funcionario
-        VALUES(default, %s, %s, %s, %s, %s);
-''', (nome, cpf, salario, cargo, departamento))
-        conn.commit()
-        print("Funcionário criado com sucesso!")
-
-        cursor.close()
-        conn.close()
-
-    except Exception as e:
-        print("Error:", e)
-        conn.rollback()
 
 
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -80,6 +79,9 @@ DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+
+meuBanco = ConexaoDB(DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD)
 
 print("Sistema RH")
 
