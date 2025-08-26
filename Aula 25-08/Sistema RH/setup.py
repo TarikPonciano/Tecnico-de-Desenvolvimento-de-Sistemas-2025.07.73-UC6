@@ -20,8 +20,7 @@ try:
     cur.executemany('''
 DROP TABLE IF EXISTS funcionario;
 DROP TABLE IF EXISTS departamento; 
-''',[])
-    
+''', [])
 
     # SQL
     cur.execute('''CREATE TABLE IF NOT EXISTS departamento(

@@ -35,8 +35,42 @@ def verFuncionarios():
         print("Falha ao carregar os arquivos")
     else:
         for func in resultado:
+            salario = round(float(func[3]), 2)
             print(
-                f"{func[0]} | {func[1]} | {func[2]} | R$ {func[3]:.2f }| {func[4]} | {func[5]}")
+                f"{func[0]} | {func[1]} | {func[2]} | R$ {func[3]}| {func[4]} | {func[5]}")
+
+
+def cadastrarFuncionario():
+    print("CADASTRO DE FUNCIONÁRIO")
+
+    nome = input("Digite o nome do funcionário: ")
+    cpf = input("Digite o cpf do funcionário: ")
+    salario = float(input("Digite o salário do funcionário: "))
+    cargo = input("Digite o cargo do funcionário: ")
+    departamento = int(
+        input("Digite o id do departamento do funcionário (0 se não houver): "))
+
+    if departamento == 0:
+        departamento = None
+
+    try:
+        conn = psycopg2.connect(dbname=DB_NAME, host=DB_HOST,
+                                port=DB_PORT, user=DB_USER, password=DB_PASSWORD)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+        INSERT INTO funcionario
+        VALUES(default, %s, %s, %s, %s, %s);
+''', (nome, cpf, salario, cargo, departamento))
+        conn.commit()
+        print("Funcionário criado com sucesso!")
+
+        cursor.close()
+        conn.close()
+
+    except Exception as e:
+        print("Error:", e)
+        conn.rollback()
 
 
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -63,7 +97,7 @@ while True:
     if op == "1":
         verFuncionarios()
     elif op == "2":
-        pass
+        cadastrarFuncionario()
     elif op == "0":
         print("Saindo do Programa...")
         break
