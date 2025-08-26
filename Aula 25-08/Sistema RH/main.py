@@ -10,8 +10,6 @@ import os
 from conexaoDB import ConexaoDB
 
 
-
-
 def verFuncionarios():
     print("LISTA DE FUNCIONÁRIOS")
 
@@ -33,7 +31,7 @@ def verFuncionarios():
 
         cursor.close()
         conn.close()
-        
+
     except Exception as e:
         print("Error:", e)
         resultado = None
@@ -63,13 +61,12 @@ def cadastrarFuncionario():
     resultado = meuBanco.manipular('''
 INSERT INTO funcionario
 VALUES (default, %s,%s,%s,%s,%s);
-''', (nome,cpf,salario,cargo,departamento))
-    
+''', (nome, cpf, salario, cargo, departamento))
+
     if resultado == "DEU CERTO!":
         print("Funcionário Cadastrado com sucesso!")
     else:
         print("Erro ao cadastrar funcionário.")
-
 
 
 dotenv.load_dotenv(dotenv.find_dotenv())
