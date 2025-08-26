@@ -17,6 +17,12 @@ try:
                             port=DB_PORT, user=DB_USER, password=DB_PASSWORD)
     cur = conn.cursor()
 
+    cur.executemany('''
+DROP TABLE IF EXISTS funcionario;
+DROP TABLE IF EXISTS departamento; 
+''',[])
+    
+
     # SQL
     cur.execute('''CREATE TABLE IF NOT EXISTS departamento(
                 id_departamento integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
