@@ -1,3 +1,12 @@
+# Criar as funcionalidades:
+# 1 - Atualizar Funcionário - Modificando as informações cadastradas de um funcionário
+# 2 - Remover Funcionário - Apaga o funcionário do banco
+# 3 - Atualizar Departamento
+# 4 - Remover Departamento
+# Bônus: Ao ver lista de funcionários, permitir escolher 1 funcionário e ver detalhes.
+# Bônus 2: Ao ver lista de funcionários, exibir o nome do departamento no lugar do id do departamento
+
+
 import dotenv
 import os
 from conexaoDB import ConexaoDB
