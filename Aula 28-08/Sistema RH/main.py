@@ -17,7 +17,8 @@ meuBanco = ConexaoDB(dbname=DB_NAME, host=DB_HOST,
 def verFuncionarios():
     print("LISTA DE FUNCIONARIOS")
 
-    funcionarios = meuBanco.consultar('''SELECT * FROM funcionario''', [])
+    funcionarios = meuBanco.consultar(
+        '''SELECT * FROM funcionario ORDER BY id_funcionario ASC;''', [])
 
     print("ID | NOME | CPF | SALÁRIO | CARGO | DEPARTAMENTO")
     for func in funcionarios:
@@ -32,6 +33,8 @@ def cadastrarFuncionario():
     cpf = input("Digite o cpf do novo funcionário:")
     salario = float(input("Digite o salario do novo funcionário:"))
     cargo = input("Digite o cargo do novo funcionário:")
+
+    verDepartamentos()
     departamento = int(
         input("Digite o id do departamento do novo funcionário (0 = sem departamento):"))
 
@@ -49,21 +52,92 @@ VALUES (default, %s, %s, %s, %s, %s);
         print("Erro ao Cadastrar Funcionário")
 
 
+def cadastrarDepartamento():
+    print("CADASTRO DE DEPARTAMENTO")
+    nome = input("Digite o nome do departamento: ")
+
+    resultado = meuBanco.manipular('''
+INSERT INTO departamento
+VALUES(default, %s);
+''', (nome,))
+
+    if resultado == "DEU CERTO!":
+        print("Departamento cadastrado com sucesso!")
+
+
+def verDepartamentos():
+    print("LISTA DE DEPARTAMENTOS")
+
+    departamentos = meuBanco.consultar(
+        "SELECT * FROM departamento ORDER BY id_departamento ASC;", [])
+
+    print("ID | NOME")
+
+    for dep in departamentos:
+        print(f"{dep[0]} | {dep[1]}")
+
+
+def menuFuncionarios():
+
+    while True:
+        print("MENU FUNCIONARIOS")
+        print('''Escolha uma opção abaixo:
+1. Ver Funcionários
+2. Cadastrar Funcionário
+0. Voltar para menu principal''')
+        op = input("Digite o número da opção desejada: ")
+
+        if op == "1":
+            verFuncionarios()
+        elif op == "2":
+            cadastrarFuncionario()
+        elif op == "0":
+            print("Voltando para o menu principal...")
+            break
+        else:
+            print("Escolha uma opção válida!")
+
+        input("TECLE ENTER PARA CONTINUAR...")
+
+
+def menuDepartamentos():
+
+    while True:
+        print("MENU DEPARTAMENTOS")
+        print('''Escolha uma opção abaixo:
+1. Ver Departamentos
+2. Cadastrar Departamento
+0. Voltar para menu principal''')
+        op = input("Digite o número da opção desejada: ")
+
+        if op == "1":
+            verDepartamentos()
+        elif op == "2":
+            cadastrarDepartamento()
+        elif op == "0":
+            print("Voltando para o menu principal...")
+            break
+        else:
+            print("Escolha uma opção válida!")
+
+        input("TECLE ENTER PARA CONTINUAR...")
+
+
 print("BEM VINDO AO SISTEMA RH")
 while True:
     print('''
 Escolha uma opção do menu:
 
-1. Ver Funcionários
-2. Cadastrar Funcionário
+1. Menu Funcionários
+2. Menu Departamentos
 0. Sair
 ''')
     op = input("Digite o número da opção desejada:")
 
     if op == "1":
-        verFuncionarios()
+        menuFuncionarios()
     elif op == "2":
-        cadastrarFuncionario()
+        menuDepartamentos()
     elif op == "0":
         print("Saindo do programa...")
         break
