@@ -27,12 +27,15 @@ def verFuncionarios():
     print("LISTA DE FUNCIONARIOS")
 
     funcionarios = meuBanco.consultar(
-        '''SELECT * FROM funcionario ORDER BY id_funcionario ASC;''', [])
+        '''SELECT * FROM funcionario
+        LEFT JOIN departamento ON departamento_id = id_departamento
+           ORDER BY id_funcionario ASC;''', [])
+    print(funcionarios)
 
     print("ID | NOME | CPF | SALÁRIO | CARGO | DEPARTAMENTO")
     for func in funcionarios:
         print(
-            f"{func[0]} | {func[1]} | {func[2]} | R$ {func[3]} | {func[4]} | {func[5]}")
+            f"{func[0]} | {func[1]} | {func[2]} | R$ {func[3]} | {func[4]} | {func[7]}")
 
 
 def cadastrarFuncionario():
@@ -59,6 +62,82 @@ VALUES (default, %s, %s, %s, %s, %s);
         print("Funcionário Cadastrado com Sucesso!")
     else:
         print("Erro ao Cadastrar Funcionário")
+
+
+def removerFuncionario():
+
+    verFuncionarios()
+
+    idFuncionario = int(
+        input("Digite o id do funcionário que deseja remover (0 = cancelar): "))
+
+    if idFuncionario <= 0:
+        print("Operação cancelada...")
+    else:
+        resultado = meuBanco.manipular('''
+DELETE FROM funcionario
+WHERE id_funcionario = %s;
+''', (idFuncionario,))
+
+        if resultado == "DEU CERTO!":
+            print("Funcionário removido com sucesso!")
+        else:
+            print("Erro ao tentar remover funcionário!")
+
+
+def atualizarFuncionario():
+    verFuncionarios()
+
+    idFuncionario = int(
+        input("Digite o id do funcionário que deseja remover (0 = cancelar): "))
+
+    if idFuncionario <= 0:
+        print("Operação cancelada...")
+    else:
+
+        funcionario = meuBanco.consultar('''
+SELECT * FROM funcionario
+LEFT JOIN departamento ON departamento_id = id_departamento
+WHERE id_funcionario = %s;
+''', (idFuncionario,))
+
+        if len(funcionario) == 0:
+            print("Funcionário não encontrado!")
+        else:
+            print(f'''
+Informações do Funcionário:
+                  
+ID: {funcionario[0][0]}
+Nome: {funcionario[0][1]}
+CPF: {funcionario[0][2]}
+Salário: R$ {funcionario[0][3]}
+Cargo: {funcionario[0][4]}
+Departamento: {funcionario[0][7]}                
+''')
+    print("DEIXE O CAMPO VAZIO PARA MANTER A INFORMAÇÃO ORIGINAL")
+    novoNome = input("Digite o novo nome: ") or funcionario[0][1]
+    novoCPF = input("Digite o novo cpf: ") or funcionario[0][2]
+    novoSalario = input("Digite o novo salario: ") or funcionario[0][3]
+    novoCargo = input("Digite o novo cargo: ") or funcionario[0][4]
+    verDepartamentos()
+    novoDepartamento = input(
+        "Digite o novo id de departamento: ") or funcionario[0][5]
+
+    resultado = meuBanco.manipular('''
+UPDATE funcionario
+SET
+nome_funcionario = %s,
+cpf_funcionario = %s,
+salario_funcionario = %s,
+cargo_funcionario = %s,
+departamento_id = %s
+WHERE id_funcionario = %s;                              
+''', (novoNome, novoCPF, float(novoSalario), novoCargo, int(novoDepartamento), idFuncionario))
+
+    if resultado == "DEU CERTO!":
+        print("Funcionário Atualizado com sucesso!")
+    else:
+        print("Falha ao atualizar funcionário.")
 
 
 def cadastrarDepartamento():
@@ -149,7 +228,7 @@ SET
 nome_departamento = %s
 WHERE id_departamento = %s
 ''', (novoNome, idDepartamento))
-            
+
             if resultado == "DEU CERTO!":
                 print("Alteração realizada com sucesso!")
             else:
@@ -163,6 +242,8 @@ def menuFuncionarios():
         print('''Escolha uma opção abaixo:
 1. Ver Funcionários
 2. Cadastrar Funcionário
+3. Atualizar Funcionário
+4. Remover Funcionário
 0. Voltar para menu principal''')
         op = input("Digite o número da opção desejada: ")
 
@@ -170,6 +251,10 @@ def menuFuncionarios():
             verFuncionarios()
         elif op == "2":
             cadastrarFuncionario()
+        elif op == "3":
+            atualizarFuncionario()
+        elif op == "4":
+            removerFuncionario()
         elif op == "0":
             print("Voltando para o menu principal...")
             break
