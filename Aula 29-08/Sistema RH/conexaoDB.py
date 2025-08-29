@@ -1,5 +1,6 @@
 import psycopg2
 
+
 class ConexaoDB():
     def __init__(self, dbname, host, port, user, password):
         self.dbname = dbname

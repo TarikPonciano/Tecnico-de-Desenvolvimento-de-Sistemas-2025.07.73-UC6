@@ -86,6 +86,76 @@ def verDepartamentos():
         print(f"{dep[0]} | {dep[1]}")
 
 
+def removerDepartamento():
+    verDepartamentos()
+
+    idDepartamento = int(
+        input("Digite o departamento que deseja remover (0=cancelar):"))
+
+    # departamentos = meuBanco.consultar('''SELECT * FROM departamento WHERE id_departamento = %s;''', [idDepartamento])
+
+    if idDepartamento <= 0:
+        print("Você cancelou a operação...")
+    # elif len(departamentos) == 0:
+    #     print("Você escolheu um departamento inválido...")
+    else:
+        resultado = meuBanco.manipular('''
+DELETE FROM departamento
+WHERE id_departamento = %s;
+''', (idDepartamento,))
+        if resultado == "DEU CERTO!":
+            print("Departamento excluído com sucesso!")
+        else:
+            print("Erro ao excluir departamento!")
+
+
+def atualizarDepartamento():
+    verDepartamentos()
+
+    idDepartamento = int(
+        input("Digite o id do departamento que deseja modificar (0=cancelar):"))
+
+    if (idDepartamento <= 0):
+        print("Você cancelou a operação...")
+    else:
+        departamento = meuBanco.consultar('''
+SELECT * FROM departamento
+WHERE id_departamento = %s;
+''', (idDepartamento,))
+
+        if len(departamento) == 0:
+            print("Departamento não encontrado!")
+        else:
+            # Para simplificar o acesso aos atributos
+            # departamento = departamento[0]
+
+            print(f'''
+Departamento Selecionado:
+
+ID: {departamento[0][0]}
+Nome: {departamento[0][1]}
+''')
+
+            # novoNome = input("Digite o novo nome (vazio=sem alteração):")
+
+            # if not novoNome:
+            #     novoNome = departamento[0][1]
+
+            novoNome = input("Digite o novo nome: ") or departamento[0][1]
+
+            resultado = meuBanco.manipular('''
+UPDATE departamento
+SET
+nome_departamento = %s
+WHERE id_departamento = %s
+''', (novoNome, idDepartamento))
+            
+            if resultado == "DEU CERTO!":
+                print("Alteração realizada com sucesso!")
+            else:
+                print("Erro ao realizar alteração...")
+
+
 def menuFuncionarios():
 
     while True:
@@ -116,6 +186,8 @@ def menuDepartamentos():
         print('''Escolha uma opção abaixo:
 1. Ver Departamentos
 2. Cadastrar Departamento
+3. Atualizar Departamento
+4. Remover Departamento
 0. Voltar para menu principal''')
         op = input("Digite o número da opção desejada: ")
 
@@ -123,6 +195,10 @@ def menuDepartamentos():
             verDepartamentos()
         elif op == "2":
             cadastrarDepartamento()
+        elif op == "3":
+            atualizarDepartamento()
+        elif op == "4":
+            removerDepartamento()
         elif op == "0":
             print("Voltando para o menu principal...")
             break
