@@ -69,7 +69,8 @@ def verClientes():
 
     print("ID | Nome")
 
-    clientes = meuBanco.consultar("SELECT * FROM cliente ORDER BY id_cliente;")
+    clientes = meuBanco.consultar(
+        "SELECT * FROM cliente ORDER BY id_cliente ASC;")
 
     if clientes == None:
         print("Erro ao consultar tabela Clientes!")
@@ -96,9 +97,9 @@ Operações:
         op = input("Digite o número da opção desejada:")
 
         if op == "1":
-            pass
+            verProdutos()
         elif op == "2":
-            pass
+            cadastrarProduto()
         elif op == "3":
             pass
         elif op == "4":
@@ -110,6 +111,40 @@ Operações:
             print("Escolha uma opção válida!")
 
         input("TECLE ENTER PARA CONTINUAR.")
+
+
+def verProdutos():
+    print("LISTA DE PRODUTOS:")
+
+    print("ID | Nome | R$ Preço | Estoque")
+
+    produtos = meuBanco.consultar(
+        "SELECT * FROM produto ORDER BY id_produto ASC;")
+
+    if produtos == None:
+        print("Erro ao consultar tabela Produtos!")
+    elif len(produtos) == 0:
+        print("NÃO HÁ PRODUTO CADASTRADOS")
+    else:
+        for produto in produtos:
+            print(
+                f"{produto[0]} | {produto[1]} | R$ {produto[2]} | {produto[3]}")
+
+
+def cadastrarProduto():
+    print("CADASTRAR NOVO PRODUTO")
+
+    nome = input("Digite o nome do produto:")
+    preco = float(input("Digite o preço do produto:"))
+    estoque = int(input("Digite o estoque do produto: "))
+
+    resultado = meuBanco.manipular(
+        "INSERT INTO produto VALUES (default, %s, %s, %s);", (nome, preco, estoque))
+
+    if resultado == "DEU CERTO!":
+        print("Produto cadastrado com sucesso!")
+    else:
+        print("Erro ao cadastrar produto!")
 
 
 while True:
