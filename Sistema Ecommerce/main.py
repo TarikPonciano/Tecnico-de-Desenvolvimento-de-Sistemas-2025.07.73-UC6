@@ -50,6 +50,20 @@ Operações:
         input("TECLE ENTER PARA CONTINUAR.")
 
 
+def cadastrarCliente():
+    print("CADASTRAR NOVO CLIENTE")
+
+    nome = input("Digite o nome do novo cliente: ")
+
+    resultado = meuBanco.manipular(
+        "INSERT INTO cliente VALUES(default, %s);", (nome,))
+
+    if resultado == "DEU CERTO!":
+        print("Cliente cadastrado com sucesso!")
+    else:
+        print("Erro ao cadastrar cliente!")
+
+
 def verClientes():
     print("LISTA DE CLIENTES:")
 
