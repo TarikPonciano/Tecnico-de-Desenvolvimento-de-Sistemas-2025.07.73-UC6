@@ -34,9 +34,9 @@ Operações:
         op = input("Digite o número da opção desejada:")
 
         if op == "1":
-            pass
+            verClientes()
         elif op == "2":
-            pass
+            cadastrarCliente()
         elif op == "3":
             pass
         elif op == "4":
@@ -48,6 +48,22 @@ Operações:
             print("Escolha uma opção válida!")
 
         input("TECLE ENTER PARA CONTINUAR.")
+
+
+def verClientes():
+    print("LISTA DE CLIENTES:")
+
+    print("ID | Nome")
+
+    clientes = meuBanco.consultar("SELECT * FROM cliente ORDER BY id_cliente;")
+
+    if clientes == None:
+        print("Erro ao consultar tabela Clientes!")
+    elif len(clientes) == 0:
+        print("NÃO HÁ CLIENTE CADASTRADOS")
+    else:
+        for cliente in clientes:
+            print(f"{cliente[0]} | {cliente[1]}")
 
 
 def menuProduto():
