@@ -3,6 +3,7 @@
 # Implemente as funcionalidades de CRUD para Cliente e Produto
 
 from conexaoDB import ConexaoDB
+from vendaDAO import VendaDAO
 import dotenv
 import os
 
@@ -16,6 +17,8 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 meuBanco = ConexaoDB(dbname=DB_NAME, host=DB_HOST,
                      port=DB_PORT, user=DB_USER, password=DB_PASSWORD)
+
+vendaDAO = VendaDAO(meuBanco)
 
 
 def menuCliente():
@@ -349,6 +352,58 @@ WHERE id_produto = %s;
         print("Erro ao remover produto!")
 
 
+def realizarCompra():
+
+    # Selecionar cliente que está realizando a compra
+    # - Ver Clientes
+    # - Pedir id do cliente
+    # - Verificar que o cliente existe
+
+    clientes = verClientes()
+
+    if clientes == None:
+        print("É necessário cadastrar algum cliente para continuar...")
+        return
+
+    idCliente = int(
+        input("Digite o id do cliente que está realizando a compra (0=cancelar): "))
+
+    if idCliente <= 0:
+        print("Operação de compra cancelada!")
+        return
+
+    clienteEscolhido = None
+
+    for cliente in clientes:
+        if cliente[0] == idCliente:
+            clienteEscolhido = cliente
+            break
+
+    if clienteEscolhido == None:
+        print("Cliente não encontrado!")
+        return
+
+    print(f"Bem vindo, {clienteEscolhido[1]}!")
+
+    # Criar registro da venda no banco de dados
+    # - Obter o id da venda criada
+    idVenda = vendaDAO.criarVenda(clienteEscolhido[0])
+
+    if idVenda == None:
+        print("Erro ao criar venda!")
+        return
+
+    print(f"Venda criada com id {idVenda}!")
+
+    # Iniciar processo de seleção de itens
+    # - Laço de repetição onde a pessoa escolhe produtos de uma lista e se o produto for válido, adiciona esse produto na lista
+    # - Importante verificar o estoque e quando consolidar atualizar o estoque
+
+    # Ao finalizar processo de vendar inserir registros de itens no banco de dados
+
+    # Se acontecer algum problema em alguma das etapas do processo, a venda deve ser deletada
+
+
 while True:
     print("Boas vindas ao Ecommerce XYZ")
 
@@ -357,7 +412,7 @@ Menu:
 
 1. Menu Clientes
 2. Menu Produtos
-3. Comprar
+3. Realizar Compra
           
 0. Sair
 ''')

@@ -54,7 +54,7 @@ quantidade_item integer NOT NULL default 1,
 preco_item NUMERIC(6,2) NOT NULL default 0.00,
 CONSTRAINT chk_qtd CHECK (quantidade_item >= 1),
 CONSTRAINT chk_preco CHECK (preco_item >= 0),
-CONSTRAINT fk_venda_item FOREIGN KEY (venda_id) REFERENCES venda(id_venda),
+CONSTRAINT fk_venda_item FOREIGN KEY (venda_id) REFERENCES venda(id_venda) ON DELETE CASCADE,
 CONSTRAINT fk_produto_item FOREIGN KEY (produto_id) REFERENCES produto(id_produto) 
                    );
 ''')
