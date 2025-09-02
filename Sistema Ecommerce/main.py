@@ -200,9 +200,9 @@ Operações:
         elif op == "2":
             cadastrarProduto()
         elif op == "3":
-            pass
+            atualizarProduto()
         elif op == "4":
-            pass
+            removerProduto()
         elif op == "0":
             print("Voltando para o menu principal...")
             break
@@ -222,12 +222,15 @@ def verProdutos():
 
     if produtos == None:
         print("Erro ao consultar tabela Produtos!")
+        return None
     elif len(produtos) == 0:
         print("NÃO HÁ PRODUTO CADASTRADOS")
+        return None
     else:
         for produto in produtos:
             print(
                 f"{produto[0]} | {produto[1]} | R$ {produto[2]} | {produto[3]}")
+        return produtos
 
 
 def cadastrarProduto():
@@ -246,6 +249,106 @@ def cadastrarProduto():
         print("Erro ao cadastrar produto!")
 
 
+def atualizarProduto():
+    produtos = verProdutos()
+
+    if produtos == None:
+        print("Não há produtos para modificar...")
+        return
+
+    idProduto = int(
+        input("Digite o id do produto que deseja modificar (0 = cancelar): "))
+
+    if idProduto <= 0:
+        print("Operação Cancelada...")
+        return
+
+    produtoEscolhido = None
+
+    for produto in produtos:
+        if produto[0] == idProduto:
+            produtoEscolhido = produto
+            break
+
+    if produtoEscolhido == None:
+        print("Produto não foi encontrado...")
+        return
+
+    print(f'''
+INFORMAÇÕES DO PRODUTO:
+
+ID - {produtoEscolhido[0]}
+Nome - {produtoEscolhido[1]}
+Preço - R$ {produtoEscolhido[2]}
+Estoque - {produtoEscolhido[3]}
+
+''')
+    print("Preencha as informações a seguir. Vazio para manter o original.")
+    nome = input("Digite o novo nome do produto:") or produtoEscolhido[1]
+    preco = float(input("Digite o novo preço do produto:")
+                  or produtoEscolhido[2])
+    estoque = int(input("Digite o novo estoque do produto:")
+                  or produtoEscolhido[3])
+
+    resultado = meuBanco.manipular('''
+UPDATE produto
+SET
+nome_produto = %s,
+preco_produto = %s,
+estoque_produto = %s
+WHERE id_produto = %s;''', (nome, preco, estoque, produtoEscolhido[0]))
+
+    if resultado == "DEU CERTO!":
+        print("Produto modificado com sucesso.")
+    else:
+        print("Não foi possível modificar o produto.")
+
+
+def removerProduto():
+    produtos = verProdutos()
+
+    if produtos == None:
+        print("Não há produtos para modificar...")
+        return
+
+    idProduto = int(
+        input("Digite o id do produto que deseja modificar (0 = cancelar): "))
+
+    if idProduto <= 0:
+        print("Operação Cancelada...")
+        return
+
+    produtoEscolhido = None
+
+    for produto in produtos:
+        if produto[0] == idProduto:
+            produtoEscolhido = produto
+            break
+
+    if produtoEscolhido == None:
+        print("Produto não foi encontrado...")
+        return
+
+    print(f'''
+INFORMAÇÕES DO PRODUTO:
+
+ID - {produtoEscolhido[0]}
+Nome - {produtoEscolhido[1]}
+Preço - R$ {produtoEscolhido[2]}
+Estoque - {produtoEscolhido[3]}
+
+''')
+    resultado = meuBanco.manipular('''
+DELETE FROM produto
+WHERE id_produto = %s;
+''', (produtoEscolhido[0],))
+
+    if resultado == "DEU CERTO!":
+        print("Produto removido com sucesso!")
+    else:
+        print("Erro ao remover produto!")
+
+
 while True:
     print("Boas vindas ao Ecommerce XYZ")
 
@@ -254,6 +357,7 @@ Menu:
 
 1. Menu Clientes
 2. Menu Produtos
+3. Comprar
           
 0. Sair
 ''')
@@ -263,6 +367,8 @@ Menu:
         menuCliente()
     elif op == "2":
         menuProduto()
+    elif op == "3":
+        realizarCompra()
     elif op == "0":
         print("Saindo do programa...")
         break
