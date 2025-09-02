@@ -38,7 +38,7 @@ Operações:
         elif op == "2":
             cadastrarCliente()
         elif op == "3":
-            pass
+            atualizarCliente()
         elif op == "4":
             removerCliente()
         elif op == "0":
@@ -82,6 +82,62 @@ def verClientes():
         for cliente in clientes:
             print(f"{cliente[0]} | {cliente[1]}")
         return clientes
+
+
+def atualizarCliente():
+    # Visualizar Lista de Clientes
+    # Escolher um cliente usando o id
+    # Verificar que o cliente existe
+    # Mostrar as informações atuais desse cliente
+    # Pedir as novas informações (se vazio = manter anterior)
+    # Executar manipulação no banco
+    clientes = verClientes()
+
+    if clientes == None:
+        print("Não há clientes para modificar...")
+        return
+
+    idCliente = int(
+        input("Digite o id do cliente a ser atualizado (0=cancelar): "))
+
+    if idCliente <= 0:
+        print("Você cancelou a operação!")
+        return
+
+    clienteEscolhido = None
+
+    for cliente in clientes:
+        if cliente[0] == idCliente:
+            clienteEscolhido = cliente
+            break
+
+    if clienteEscolhido == None:
+        print("Não foi encontrado um cliente com esse id!")
+        return
+
+    print(f'''
+INFORMAÇÕES DO CLIENTE:
+          
+ID - {clienteEscolhido[0]}
+NOME - {clienteEscolhido[1]}
+
+''')
+    print("Digite as novas informações a seguir. Deixe vazio para manter a informação original!")
+
+    nome = input("Digite o novo nome:") or cliente[1]
+
+    resultado = meuBanco.manipular('''
+UPDATE cliente
+SET
+nome_cliente = %s
+WHERE
+id_cliente = %s;
+''', (nome, clienteEscolhido[0]))
+
+    if resultado == "DEU CERTO!":
+        print("Cliente modificado com sucesso!")
+    else:
+        print("Erro ao modificar cliente!")
 
 
 def removerCliente():
