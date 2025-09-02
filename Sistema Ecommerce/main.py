@@ -40,7 +40,7 @@ Operações:
         elif op == "3":
             pass
         elif op == "4":
-            pass
+            removerCliente()
         elif op == "0":
             print("Voltando para o menu principal...")
             break
@@ -56,7 +56,7 @@ def cadastrarCliente():
     nome = input("Digite o nome do novo cliente: ")
 
     resultado = meuBanco.manipular(
-        "INSERT INTO cliente VALUES(default, %s);", (nome,))
+        "INSERT INTO cliente VALUES(default, %s) RETURNING id_cliente;", (nome,))
 
     if resultado == "DEU CERTO!":
         print("Cliente cadastrado com sucesso!")
@@ -74,11 +74,54 @@ def verClientes():
 
     if clientes == None:
         print("Erro ao consultar tabela Clientes!")
+        return None
     elif len(clientes) == 0:
         print("NÃO HÁ CLIENTE CADASTRADOS")
+        return None
     else:
         for cliente in clientes:
             print(f"{cliente[0]} | {cliente[1]}")
+        return clientes
+
+
+def removerCliente():
+    clientes = verClientes()
+
+    if clientes == None:
+        print("Não há clientes para remover!")
+        return
+
+    idCliente = int(
+        input("Digite o id do cliente que deseja remover (0=cancelar): "))
+
+    if idCliente <= 0:
+        print("Operação cancelada!")
+        return
+    else:
+        clienteEscolhido = None
+
+        for cliente in clientes:
+            if cliente[0] == idCliente:
+                clienteEscolhido = cliente
+                break
+
+        if clienteEscolhido == None:
+            print("ID de Cliente não encontrado!")
+        else:
+            print(f'''
+INFORMAÇÕES DO CLIENTE:
+
+ID: {clienteEscolhido[0]}
+NOME: {clienteEscolhido[1]}
+
+''')
+            resultado = meuBanco.manipular(
+                "DELETE FROM cliente WHERE id_cliente = %s;", (clienteEscolhido[0],))
+
+            if resultado == "DEU CERTO!":
+                print(f"Cliente {clienteEscolhido[0]} Removido com Sucesso")
+            else:
+                print(f"Falha ao remover o Cliente {clienteEscolhido[0]}")
 
 
 def menuProduto():

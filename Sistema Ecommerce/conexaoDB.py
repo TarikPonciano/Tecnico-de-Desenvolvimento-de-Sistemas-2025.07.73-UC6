@@ -40,6 +40,7 @@ class ConexaoDB():
             self.conn.rollback()
             resultado = "DEU ERRADO!"
 
+
         self.desconectar()
 
         return resultado
