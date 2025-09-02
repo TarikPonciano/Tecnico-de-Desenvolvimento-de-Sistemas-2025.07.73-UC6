@@ -94,6 +94,7 @@ def atualizarCliente():
     # Mostrar as informações atuais desse cliente
     # Pedir as novas informações (se vazio = manter anterior)
     # Executar manipulação no banco
+
     clientes = verClientes()
 
     if clientes == None:
@@ -399,11 +400,81 @@ def realizarCompra():
     # - Laço de repetição onde a pessoa escolhe produtos de uma lista e se o produto for válido, adiciona esse produto na lista
     # - Importante verificar o estoque e quando consolidar atualizar o estoque
 
+    produtosConsulta = meuBanco.consultar(
+        '''SELECT * FROM produto WHERE estoque_produto > 0 ORDER BY id_produto;''')
+
+    produtosCatalogo = {
+
+    }
+
+    for produto in produtosConsulta:
+        produtosCatalogo[produto[0]] = {
+            "id": produto[0],
+            "nome": produto[1],
+            "preco": produto[2],
+            "estoque": produto[3]
+        }
+
+    produtosComprados = {}
+    while True:
+        print("LISTA DE PRODUTOS")
+        print("ID | NOME | PREÇO R$ | ESTOQUE")
+        for produto in produtosCatalogo.values():
+            print(
+                f"{produto["id"]} | {produto["nome"]} | R$ {produto["preco"]} | {produto["estoque"]}")
+
+        idEscolhido = int(
+            input("Digite o id do produto que deseja comprar (0 = finalizar compra): "))
+
+        if idEscolhido <= 0:
+            print("FINALIZANDO COMPRA...")
+            break
+        elif not produtosCatalogo.get(idEscolhido):
+            print("Produto não encontrado!")
+            input("TECLE ENTER PARA CONTINUAR")
+            continue
+
+        produtoEscolhido = produtosCatalogo.get(idEscolhido)
+        print(f'''
+Produto Escolhido:
+ID - {produtoEscolhido["id"]}
+NOME - {produtoEscolhido["nome"]}
+PREÇO - R$ {produtoEscolhido["preco"]}
+ESTOQUE - {produtoEscolhido["estoque"]}
+''')
+        quantidade = int(
+            input("Digite a quantidade unidades que deseja comprar: "))
+
+        if (quantidade > produtoEscolhido["estoque"]):
+            print("Não há itens suficientes...")
+            continue
+
+        if produtosComprados.get(produtoEscolhido["id"]):
+            produtosComprados[produtoEscolhido["id"]
+                              ]["quantidade"] += quantidade
+        else:
+            produtosComprados[produtoEscolhido["id"]] = {
+                "id": produtoEscolhido["id"],
+                "nome": produtoEscolhido["nome"],
+                "preco": produtoEscolhido["preco"],
+                "quantidade": quantidade
+            }
+        produtosCatalogo[produtoEscolhido["id"]]["estoque"] -= quantidade
+
+        input("TECLE ENTER PARA CADASTRAR OUTRO PRODUTO")
+
+    resultado = vendaDAO.cadastrarItensVenda(idVenda, produtosComprados)
+
+    if resultado and len(produtosComprados) > 0:
+        print("Venda cadastrada com sucesso!")
+    else:
+        print("O cadastrado da venda falhou!")
+        vendaDAO.removerVenda(idVenda)
+
     # Ao finalizar processo de vendar inserir registros de itens no banco de dados
 
+
     # Se acontecer algum problema em alguma das etapas do processo, a venda deve ser deletada
-
-
 while True:
     print("Boas vindas ao Ecommerce XYZ")
 
