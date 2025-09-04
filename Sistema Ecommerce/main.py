@@ -459,22 +459,72 @@ ESTOQUE - {produtoEscolhido["estoque"]}
                 "preco": produtoEscolhido["preco"],
                 "quantidade": quantidade
             }
+
         produtosCatalogo[produtoEscolhido["id"]]["estoque"] -= quantidade
 
         input("TECLE ENTER PARA CADASTRAR OUTRO PRODUTO")
 
+    # Ao finalizar processo de venda inserir registros de itens no banco de dados
     resultado = vendaDAO.cadastrarItensVenda(idVenda, produtosComprados)
 
     if resultado and len(produtosComprados) > 0:
         print("Venda cadastrada com sucesso!")
     else:
+        # Se acontecer algum problema em alguma das etapas do processo, a venda deve ser deletada
         print("O cadastrado da venda falhou!")
         vendaDAO.removerVenda(idVenda)
 
-    # Ao finalizar processo de vendar inserir registros de itens no banco de dados
+
+def realizarCompraSimples():
+    # Ver clientes
+    clientes = verClientes()
+    # Escolher o cliente
+    idCliente = int(input("Digite o id do cliente escolhido:"))
+
+    clienteEscolhido = None
+    for cliente in clientes:
+        if cliente[0] == idCliente:
+            clienteEscolhido = cliente
+            break
+
+    print("Bem vindo,", clienteEscolhido[1])
+
+    # Criar a venda
+    idVenda = vendaDAO.criarVenda(idCliente)
+
+    produtosComprados = []
+    # (idVenda, idProduto, quantidade,preco)
+    while True:
+        # Ver produtos
+        produtos = verProdutos()
+
+        # Escolher produtos a serem comprados
+        idProduto = int(input("Digite o id do produto desejado (0=sair):"))
+
+        if idProduto == 0:
+            break
+
+        produtoEscolhido = None
+        for produto in produtos:
+            if produto[0] == idProduto:
+                produtoEscolhido = produto
+                break
+
+        print("Você escolheu:", produtoEscolhido[1])
+        quantidade = int(input("Digite quantas unidades desejada adquirir:"))
+
+        produtosComprados.append(
+            (idVenda, produtoEscolhido[0], quantidade, produtoEscolhido[2]))
+
+    # Cadastrar esses produtos no banco
+
+    for produto in produtosComprados:
+        meuBanco.manipular('''
+INSERT INTO item
+VALUES (default, %s, %s, %s, %s);
+''', produto)
 
 
-    # Se acontecer algum problema em alguma das etapas do processo, a venda deve ser deletada
 while True:
     print("Boas vindas ao Ecommerce XYZ")
 
@@ -484,6 +534,7 @@ Menu:
 1. Menu Clientes
 2. Menu Produtos
 3. Realizar Compra
+4. Compra Simples
           
 0. Sair
 ''')
@@ -495,6 +546,8 @@ Menu:
         menuProduto()
     elif op == "3":
         realizarCompra()
+    elif op == "4":
+        realizarCompraSimples()
     elif op == "0":
         print("Saindo do programa...")
         break
