@@ -525,6 +525,70 @@ VALUES (default, %s, %s, %s, %s);
 ''', produto)
 
 
+def verVendas():
+    # Id Venda, Nome do Cliente, Data da Compra, Valor Total
+    # Somente as vendas que possuem Valor Total
+    vendas = meuBanco.consultar('''
+SELECT id_venda, nome_cliente, data_venda, total_venda FROM venda
+INNER JOIN cliente ON cliente_id = id_cliente
+WHERE total_venda > 0
+ORDER BY id_venda ASC;
+''')
+
+    print("LISTA DE VENDAS: ")
+    print("ID | Nome Cliente | Data da Venda | Total R$")
+    for venda in vendas:
+        print(f'{venda[0]} | {venda[1]} | {venda[2]} | {venda[3]}')
+
+    return vendas
+
+
+def verVendaEspecifica():
+
+    vendas = verVendas()
+
+    idVenda = int(input("Digite o id da venda que deseja ver detalhes: "))
+
+    vendaEscolhida = None
+
+    for venda in vendas:
+        if venda[0] == idVenda:
+            vendaEscolhida = venda
+            break
+
+    if vendaEscolhida == None:
+        print("Nota Fiscal não encontrada!")
+        return
+
+    # Dados da Venda (ID, Nome do Cliente, Data, Total)
+    # Lista de produtos vendidos (Consultar tabela item)
+
+    print("Detalhes da Venda:")
+
+    print(f'''
+Número da Nota Fiscal: {vendaEscolhida[0]}
+Nome do Cliente: {vendaEscolhida[1]}
+Data da Venda: {vendaEscolhida[2]}
+Total da Venda: R$ {vendaEscolhida[3]}
+''')
+
+    print("Items da Venda:")
+    # Temos ID Venda
+    # Consultar tabela Item onde venda_id = idVenda (INNER JOIN)
+    # Lembrar de trazer o nome do produto também da tabela produto. produto_id = id_produto
+
+    items = meuBanco.consultar('''
+SELECT nome_produto, preco_item, quantidade_item FROM item
+INNER JOIN produto ON produto_id = id_produto
+WHERE venda_id = %s;
+''', (vendaEscolhida[0],))
+
+    print("Nome | Preço R$ | Quantidade | Total R$")
+    for item in items:
+        subTotal = item[1] * item[2]
+        print(f"{item[0]} | R$ {item[1]} | {item[2]} | R$ {subTotal}")
+
+
 while True:
     print("Boas vindas ao Ecommerce XYZ")
 
@@ -535,6 +599,7 @@ Menu:
 2. Menu Produtos
 3. Realizar Compra
 4. Compra Simples
+5. Ver Nota Fiscal
           
 0. Sair
 ''')
@@ -548,6 +613,8 @@ Menu:
         realizarCompra()
     elif op == "4":
         realizarCompraSimples()
+    elif op == "5":
+        verVendaEspecifica()
     elif op == "0":
         print("Saindo do programa...")
         break
