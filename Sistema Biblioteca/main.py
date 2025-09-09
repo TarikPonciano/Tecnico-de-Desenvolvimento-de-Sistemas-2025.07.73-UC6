@@ -51,7 +51,8 @@ Menu:
         elif (op == "2"):
             cadastrarLivro()
         elif (op == "0"):
-            pass
+            print("Saindo do Programa...")
+            break
         else:
             print("Escolha uma opção válida.")
 
@@ -70,4 +71,5 @@ if __name__ == "__main__":
     meuBanco = ConexaoDB(dbname=DB_NAME, host=DB_HOST,
                          port=DB_PORT, user=DB_USER, password=DB_PASSWORD)
     livroDAO = LivroDAO(meuBanco)
+    clienteDAO = ClienteDAO(meuBanco)
     main()
