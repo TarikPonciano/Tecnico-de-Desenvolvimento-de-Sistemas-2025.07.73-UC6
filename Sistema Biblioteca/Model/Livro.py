@@ -6,3 +6,12 @@ class Livro:
             self.titulo = titulo
         else:
             self.titulo = "Sem Título"
+
+    def mostrarInformacoes(self):
+        print(f'''
+INFORMAÇÕES DO LIVRO:
+              
+ID - {self.id}
+NOME - {self.titulo}
+
+''')

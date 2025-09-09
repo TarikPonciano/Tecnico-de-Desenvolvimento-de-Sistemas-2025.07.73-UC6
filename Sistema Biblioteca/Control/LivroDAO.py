@@ -24,3 +24,19 @@ ORDER BY id_livro ASC;
             livros.append(livro)
 
         return livros
+
+    def atualizarLivro(self, livroModificado):
+
+        self.manipular('''
+UPDATE livro
+SET
+titulo_livro = %s
+WHERE
+id_livro = %s;
+''', (livroModificado.titulo, livroModificado.id))
+
+    def removerLivro(self, livro):
+        self.manipular('''
+DELETE FROM livro
+WHERE id_livro = %s;
+''', (livro.id,))
