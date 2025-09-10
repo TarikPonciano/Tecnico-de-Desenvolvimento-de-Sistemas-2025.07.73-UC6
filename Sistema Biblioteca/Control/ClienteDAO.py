@@ -25,3 +25,19 @@ ORDER BY id_cliente ASC;
             clientes.append(cliente)
 
         return clientes
+
+    def atualizarCliente(self, clienteModificado):
+        self.manipular(
+            '''
+UPDATE cliente
+SET
+nome_cliente = %s
+WHERE
+id_cliente = %s;
+''', (clienteModificado.nome, clienteModificado.id))
+
+    def removerCliente(self, cliente):
+        self.manipular('''
+DELETE FROM cliente
+WHERE id_cliente = %s;
+''', (cliente.id,))

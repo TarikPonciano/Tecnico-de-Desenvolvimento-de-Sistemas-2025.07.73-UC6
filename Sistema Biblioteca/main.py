@@ -120,6 +120,8 @@ def verListaClientes():
     for cliente in clientes:
         print(f"{cliente.id} | {cliente.nome}")
 
+    return clientes
+
 
 def cadastrarCliente():
 
@@ -130,6 +132,46 @@ def cadastrarCliente():
     novoCliente = Cliente(None, nome)
 
     clienteDAO.cadastrarCliente(novoCliente)
+
+
+def modificarCliente():
+    # Ver e obter lista de Clientes
+    # Selecionar 1 cliente específico
+    # Exibir as informações desse cliente
+    # Realizar alteração nas informações
+    # Enviar para o banco de dados
+
+    clientes = verListaClientes()
+
+    idCliente = int(input("Digite o id do cliente que deseja modificar: "))
+
+    clienteEscolhido = None
+    for cliente in clientes:
+        if cliente.id == idCliente:
+            clienteEscolhido = cliente
+            break
+
+    if not clienteEscolhido:
+        print("Cliente não encontrado! Tente um outro ID!")
+        return
+
+    print("Cliente Escolhido:")
+
+#     print(f'''
+# Informações do Cliente:
+
+#           ID - {clienteEscolhido.id}
+#           Nome - {clienteEscolhido.nome}
+# ''')
+    clienteEscolhido.mostrarInformacoes()
+
+    novoNome = input("Digite o novo nome: ") or clienteEscolhido.nome
+
+    clienteEscolhido.nome = novoNome
+
+    clienteModificado = Cliente(clienteEscolhido.id, novoNome)
+
+    clienteDAO.atualizarCliente(clienteEscolhido)
 
 
 def main():
@@ -145,6 +187,10 @@ Menu:
               
 5. Ver Clientes
 6. Cadastrar Clientes
+7. Modificar Cliente
+8. Remover Cliente
+              
+0. Sair
 
 ''')
         op = input("Digite o id do livro desejado: ")
@@ -161,6 +207,10 @@ Menu:
             verListaClientes()
         elif (op == "6"):
             cadastrarCliente()
+        elif (op == "7"):
+            modificarCliente()
+        elif (op == "8"):
+            removerCliente()
         elif (op == "0"):
             print("Saindo do Programa...")
             break
