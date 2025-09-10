@@ -174,6 +174,37 @@ def modificarCliente():
     clienteDAO.atualizarCliente(clienteEscolhido)
 
 
+def removerCliente():
+
+    clientes = verListaClientes()
+
+    idCliente = int(input("Digite o id do cliente que deseja remover: "))
+
+    clienteEscolhido = None
+
+    for cliente in clientes:
+        if cliente.id == idCliente:
+            clienteEscolhido = cliente
+            break
+
+    if not clienteEscolhido:
+        print("Não foi encontrado Cliente com o ID informado!")
+        return
+
+    print("Cliente escolhido:")
+
+    clienteEscolhido.mostrarInformacoes()
+
+    print("Deseja remover esse cliente?")
+
+    confirmacao = input("Sim ou Não:")
+
+    if confirmacao == "Sim":
+        clienteDAO.removerCliente(clienteEscolhido)
+    else:
+        print("Cancelando a operação... Voltando para o menu principal...")
+
+
 def main():
     while True:
         print("Sistema Biblioteca")
