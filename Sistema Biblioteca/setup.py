@@ -15,6 +15,7 @@ meuBanco = ConexaoDB(dbname=DB_NAME, host=DB_HOST,
                      port=DB_PORT, user=DB_USER, password=DB_PASSWORD)
 
 
+meuBanco.manipular("DROP TABLE IF EXISTS aluguel;")
 meuBanco.manipular("DROP TABLE IF EXISTS emprestimo;")
 meuBanco.manipular("DROP TABLE IF EXISTS livro;")
 meuBanco.manipular("DROP TABLE IF EXISTS cliente;")
@@ -28,11 +29,11 @@ meuBanco.manipular('''CREATE TABLE IF NOT EXISTS livro(
                    titulo_livro varchar(255) NOT NULL);''')
 
 meuBanco.manipular('''
-CREATE TABLE IF NOT EXISTS emprestimo(
-id_emprestimo integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS aluguel(
+id_aluguel integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 cliente_id integer NOT NULL,
 livro_id integer NOT NULL,
-CONSTRAINT fk_cliente_emprestimo FOREIGN KEY (cliente_id) REFERENCES cliente(id_cliente),
-CONSTRAINT fk_livro_emprestimo FOREIGN KEY (livro_id) REFERENCES livro(id_livro)
+CONSTRAINT fk_cliente_aluguel FOREIGN KEY (cliente_id) REFERENCES cliente(id_cliente),
+CONSTRAINT fk_livro_aluguel FOREIGN KEY (livro_id) REFERENCES livro(id_livro)
 );
 ''')

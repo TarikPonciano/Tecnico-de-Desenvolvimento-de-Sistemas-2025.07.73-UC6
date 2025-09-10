@@ -1,8 +1,10 @@
 from Control.ConexaoDB import ConexaoDB
 from Control.ClienteDAO import ClienteDAO
 from Control.LivroDAO import LivroDAO
+from Control.AluguelDAO import AluguelDAO
 from Model.Livro import Livro
 from Model.Cliente import Cliente
+from Model.Aluguel import Aluguel
 import dotenv
 import os
 
@@ -205,6 +207,54 @@ def removerCliente():
         print("Cancelando a operação... Voltando para o menu principal...")
 
 
+def verListaAlugueis():
+
+    alugueis = aluguelDAO.consultarAlugueis()
+    print("Lista de Alugueis:")
+    print("ID | Nome do Cliente | Titulo do Livro")
+    for aluguel in alugueis:
+        print(f"{aluguel.id} | {aluguel.cliente.nome} | {aluguel.livro.titulo}")
+
+    return alugueis
+
+
+def cadastrarAluguel():
+
+    clientes = verListaClientes()
+
+    idCliente = int(
+        input("Digite o id do cliente que está alugando o livro: "))
+
+    clienteEscolhido = None
+
+    for cliente in clientes:
+        if cliente.id == idCliente:
+            clienteEscolhido = cliente
+            break
+
+    if not clienteEscolhido:
+        print("Cliente não encontrado!")
+        return
+
+    livros = verListaLivros()
+
+    idLivro = int(input("Digite o id do livro desejado:"))
+
+    livroEscolhido = None
+    for livro in livros:
+        if livro.id == idLivro:
+            livroEscolhido = livro
+            break
+
+    if not livroEscolhido:
+        print("Livro não encontrado!")
+        return
+
+    aluguel = Aluguel(None, livroEscolhido, clienteEscolhido)
+
+    aluguelDAO.cadastrarAluguel(aluguel)
+
+
 def main():
     while True:
         print("Sistema Biblioteca")
@@ -220,6 +270,9 @@ Menu:
 6. Cadastrar Clientes
 7. Modificar Cliente
 8. Remover Cliente
+              
+9. Ver Alugueis
+10. Cadastrar Aluguel
               
 0. Sair
 
@@ -242,6 +295,10 @@ Menu:
             modificarCliente()
         elif (op == "8"):
             removerCliente()
+        elif (op == "9"):
+            verListaAlugueis()
+        elif (op == "10"):
+            cadastrarAluguel()
         elif (op == "0"):
             print("Saindo do Programa...")
             break
@@ -264,4 +321,5 @@ if __name__ == "__main__":
                          port=DB_PORT, user=DB_USER, password=DB_PASSWORD)
     livroDAO = LivroDAO(meuBanco)
     clienteDAO = ClienteDAO(meuBanco)
+    aluguelDAO = AluguelDAO(meuBanco)
     main()
