@@ -24,6 +24,18 @@ def cadastrarLivro():
     session.close()
     print("Livro Cadastrado:", novoLivro)
 
+def verLivros():
+
+    print("Lista de Livros: ")
+
+    session = Session()
+    livros = session.query(Livro).all()
+    session.close()
+
+    print("ID | Titulo | Autor | Ano")
+    for livro in livros:
+        print(f"{livro.id} | {livro.titulo} | {livro.autor} | {livro.ano_publicacao}")
+
 
 while True:
 
@@ -40,7 +52,7 @@ while True:
     if op == "1":
         cadastrarLivro()
     elif op == "2":
-        pass
+        verLivros()
     elif op == "9":
         configurarBanco()
     elif op == "0":
