@@ -7,6 +7,24 @@ def configurarBanco():
     Base.metadata.create_all(bind=engine)
 
 
+def cadastrarLivro():
+    print("Cadastro de Novo Livro")
+
+    novoTitulo = input("Digite o titulo do livro: ")
+    novoAutor = input("Digite o autor do livro: ")
+    novoAno_publicacao = int(input("Digite o ano de publicação do livro: "))
+
+    novoLivro = Livro(titulo=novoTitulo, autor=novoAutor,
+                      ano_publicacao=novoAno_publicacao)
+
+    session = Session()
+    session.add(novoLivro)
+    session.commit()
+    session.refresh(novoLivro)
+    session.close()
+    print("Livro Cadastrado:", novoLivro)
+
+
 while True:
 
     print("Menu: ")
@@ -20,7 +38,7 @@ while True:
     op = input("Digite a opção desejada do menu:")
 
     if op == "1":
-        pass
+        cadastrarLivro()
     elif op == "2":
         pass
     elif op == "9":

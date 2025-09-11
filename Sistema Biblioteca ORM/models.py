@@ -9,3 +9,13 @@ class Livro(Base):
     titulo = Column(String, nullable=False)
     autor = Column(String, nullable=False, default="Autor Não Identificado")
     ano_publicacao = Column(Integer, nullable=False)
+
+    def __repr__(self):
+        return f'''
+Informações do Livro:
+
+ID - {self.id}
+Titulo - {self.titulo}
+Autor - {self.autor}
+Ano Publicação - {self.ano_publicacao}
+'''
