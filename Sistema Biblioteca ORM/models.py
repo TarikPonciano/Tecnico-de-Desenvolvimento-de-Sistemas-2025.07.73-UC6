@@ -33,8 +33,8 @@ class Cliente(Base):
     nome = Column(String, nullable=False)
     email = Column(String, nullable=False)
 
-    alugueis = relationship("Aluguel", back_populates="cliente")
-
+    alugueis = relationship("Aluguel", back_populates="cliente", lazy="joined")
+    
     def mostrarInformacoes(self):
 
         print(f'''
@@ -57,8 +57,8 @@ class Aluguel(Base):
     cliente_id = Column(Integer, ForeignKey("cliente.id"), nullable=False)
     livro_id = Column(Integer, ForeignKey("livro.id"), nullable=False)
 
-    livro = relationship("Livro", back_populates="alugueis")
-    cliente = relationship("Cliente", back_populates="alugueis")
+    livro = relationship("Livro", back_populates="alugueis", lazy="joined")
+    cliente = relationship("Cliente", back_populates="alugueis", lazy="joined")
 
     def __repr__(self):
         return f"<Aluguel {self.livro.titulo} - {self.cliente.nome}>"
